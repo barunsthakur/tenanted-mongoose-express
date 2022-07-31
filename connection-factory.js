@@ -1,10 +1,18 @@
-const mongoose = require('mongoose')
-import contextProp from 'tenant-context';
+import mongoose from 'mongoose';
+import { contextProp } from './tenant-context.js';
 
+const dbUrl = (tenantId) => `mongodb://localhost:27017/${tenantId}`
 
-function connectionFactory() {
+const connectionCache = {}; // cache to store connections
+
+export function dbConn() {
     let tenantId = contextProp('tenantId');
-    let conn = mongoose.createConnection(dbUrl(tenantId));
-    let Book = conn.model("Book", bookScheme);
+
+    let conn = connectionCache[tenantId];
+    if (conn == null) {
+        conn = mongoose.createConnection(dbUrl(tenantId));
+        connectionCache[tenantId] =  conn;
+    }
+
     return conn; 
 };

@@ -1,8 +1,8 @@
-const { AsyncLocalStorage } = require('async_hooks');
+import { AsyncLocalStorage } from 'async_hooks';
 
 const tenantCtxLocalStorage = new AsyncLocalStorage();
 
-const tenantContextMiddleware = (req, res, next) => {
+export const tenantContextMiddleware = (req, res, next) => {
   const tenantId  = req.headers['tenantid'];
 
   const map = new Map();
@@ -11,8 +11,6 @@ const tenantContextMiddleware = (req, res, next) => {
   tenantCtxLocalStorage.run(map, () => next());
 };
 
-const contextProp = (prop) => {
+export const contextProp = (prop) => {
     return tenantCtxLocalStorage.getStore().get(prop);
-}
-
-module.exports = contextProp, tenantContextMiddleware;
+};
