@@ -16,3 +16,14 @@ export function dbConn() {
 
     return conn; 
 };
+
+export function withCon(callback) {
+    let conn = dbConn();
+    return callback(conn);
+}
+
+export const model = (name, schema) => {
+    return withCon(db => {
+        db.model(name, schema);
+    });
+}
